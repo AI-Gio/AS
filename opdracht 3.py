@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-import random
-import numpy as np
 
 
 @dataclass
@@ -27,12 +25,17 @@ class Doolhof:
     maze[1, 0].reward = -2
     actions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
-    def step(self,state):
+    def step(self):
         """
         Takes a step in environment.
         Gets a state and action and gives back next state
-        :return:
         """
+        d = Doolhof
+        p = Policy(d)
+        a = Agent(d, (2, 0), p)
+        a.value_iteration(1)
+        p.policy(1)
+        a.choose_action(p)
 
 
 class Policy:
@@ -119,15 +122,8 @@ class Agent:
                 new_coord = (action[0] + new_coord[0], action[1] + new_coord[1])
         print("finished")
 
-
 d = Doolhof
-p = Policy(d)
-a = Agent(d, (2,0), p)
-a.value_iteration(1)
-p.policy(1)
-a.choose_action(p)
-
-
+d.step(d)
 
 
 
