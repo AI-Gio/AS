@@ -124,7 +124,7 @@ class Agent:
                     new_v_grid[(x, y)] = 0
                 else:
                     for cc in cross_coords:
-                        if cc in self.maze.maze: #all(xa >= ya for xa, ya in zip(cc, (0, 0))) and all(xa <= ya for xa, ya in zip(cc, (3, 3))) # check if coords is in grid
+                        if cc in self.maze.maze: # check if coords is in grid
                             max_set.append(self.maze.maze[cc].reward + discount * self.value_grid[cc])
                     new_v_grid[(x, y)] = max(max_set)
                 diff_value = abs(new_v_grid[(x, y)] - self.value_grid[(x, y)])
