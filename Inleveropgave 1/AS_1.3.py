@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 @dataclass
 class State:
     x: int
@@ -8,7 +7,6 @@ class State:
     value: list
     reward: float
     finish: bool
-
 
 class Doolhof:
     maze = dict()
@@ -25,11 +23,14 @@ class Doolhof:
     maze[1, 0].reward = -2
     actions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
+    print(type(maze))
+
     def step(self):
         """
         Takes a step in environment.
         Gets a state and action and gives back next state
         """
+        # doolhof heeft bepaalde staat en agent heeft bepaalde staat en agent kiest de actie en stuurt naar doolhof en doolhof plaatst agent op de goede plek
         d = Doolhof
         p = Policy(d)
         a = Agent(d, (2, 0), p)
@@ -49,6 +50,7 @@ class Policy:
         Calculate policy from Doolhof.maze
         :param discount: float that defines impact how much the values are changed per iteration
         """
+        # zo maken dat een state meekrijgt en een actie teruggeeft
         for x,y in self.d.maze:
             if self.d.maze[(x,y)].finish:
                 self.policy_grid[(x,y)] = None
@@ -60,12 +62,11 @@ class Policy:
                     if all(xa >= ya for xa, ya in zip(cc, (0, 0))) and all(xa <= ya for xa, ya in zip(cc, (3, 3))): # checks if coord is between (0,0) and (3,3)
                         max_set.append(self.d.maze[cc].reward + discount * self.d.maze[cc].value[-1])
                     else:
-                        max_set.append(-999) # Low number so that it wont be chosen as max number
+                        max_set.append(-999) # here needs to come the number that is on own square
                 max_i = [index for index, element in enumerate(max_set) if element == max(max_set)] # get indices of max numbers
                 self.policy_grid[(x,y)] = max_i
                 actions = ['↑','→','↓','←']
                 self.policy_show[(x,y)] = [actions[i] for i in max_i]
-
         f = list(self.policy_show.values())
         f = [f[12:16], f[8:12], f[4:8], f[:4]]
         print(f"Policy: \n{f[0]}\n{f[1]}\n{f[2]}\n{f[3]}\n")
@@ -106,21 +107,30 @@ class Agent:
             f = [s.value[-1] for s in list(self.doolhof.maze.values())]
             print(f"iteration: {k}\n{f[12:16]}\n{f[8:12]}\n{f[4:8]}\n{f[:4]}\n")
 
-    def choose_action(self, pol:Policy):
+    def mc_policy_eval(self):
+
+        returns = {}
+        episode = []
+        while True:
+            self.choose_action()
+
+    def choose_action(self):
         """
         Agent recieves Policy and its location + state. With this info chooses its action.
         :param pol: Policy
         """
+        path = []
         new_coord = self.own_location
         while True:
-            print(new_coord)
-            m = pol.policy_grid[new_coord]
+            path.append(new_coord)
+            m = self.pol.policy_grid[new_coord]
             if m == None:
                 break
             else:
                 action = self.doolhof.actions[m[0]]
                 new_coord = (action[0] + new_coord[0], action[1] + new_coord[1])
         print("finished")
+        return path
 
 d = Doolhof
 d.step(d)
